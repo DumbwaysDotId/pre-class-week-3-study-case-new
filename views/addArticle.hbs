@@ -1,23 +1,40 @@
 {{> header}}
+
+{{#if message}}
+    <div class="alert alert-{{message.type}}" role="alert">
+        {{message.message}}
+    </div>
+{{/if}}
+
 {{> navbar}}
 
 <div class="container text-center pt-5">
-    <form>
+    <form action="/article-add" method="POST" enctype="multipart/form-data">
         <div class="file-input-group text-start">
-            <input type="file" hidden id="file" aria-label="File browser example">
+            <input type="file" hidden id="file" aria-label="File browser example" name="image" onchange="handleChange()">
             <label for="file">Attache Thumbnail <img src="/public/icons/attach.svg" alt=""></label>
         </div>
+        <div id="preview-thumbnail" class="text-start"></div>
         <div>
-            <input type="text" placeholder="Title">
+            <input type="text" placeholder="Title" name="title" value="Ini judul artikel">
         </div>
         <div>
-            <textarea placeholder="Article Content"></textarea>
+            <textarea placeholder="Article Content" name="content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque, provident?</textarea>
         </div>
         <div class="text-end">
             <button class="btn-submit-article">Submit</button>
         </div>
     </form>
 </div>
+
+<script>
+
+    function handleChange(){
+        const previewElement = document.getElementById('preview-thumbnail');
+        const value = URL.createObjectURL(event.target.files[0]);
+        previewElement.innerHTML = `<img src="${value}" style="width: 250px; margin-left: 170px;" class="mb-3"/>`
+    }
+</script>
 
 {{> footer}}
     

@@ -38,6 +38,7 @@
   font-weight: bold;
   font-size: 36px;
   line-height: 42px;
+  color: #393939;
 }
 
 .text-desc-content {
@@ -194,4 +195,8 @@ form button {
 
 .btn-submit-article {
   margin-right: 170px;
+}
+
+.main-content a {
+  text-decoration: none !important;
 }

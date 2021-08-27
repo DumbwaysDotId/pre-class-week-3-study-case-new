@@ -1,11 +1,16 @@
 {{> header}}
+
+{{#if message}}
+    <div class="alert alert-{{message.type}}" role="alert">
+        {{message.message}}
+    </div>
+{{/if}}
+
 {{> navbar}}
 
 <div class="container text-center pt-5">
-    {{#if success}}
-        {{success}}
-    {{/if}}
-    <form action="/register" method="post" novalidate>
+
+    <form action="/register" method="post">
         <div>
             <input type="email" placeholder="Email" name="email">
         </div>

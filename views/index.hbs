@@ -1,53 +1,50 @@
 {{> header}}
+
+{{#if message}}
+    <div class="alert alert-{{message.type}}" role="alert">
+        {{message.message}}
+    </div>
+{{/if}}
+
 {{> navbar}}
+
 <div class="container mt-4">
-  <div class="row">
+  {{#if articles}}
+  <div class="row main-content">
     <div class="col-4">
-      <img src="#" class="img-content" alt=""/>
+        <a href="/article/{{articles.0.id}}">
+          <img src="{{articles.0.image}}" class="img-content img-fluid" alt=""/>
+        </a>
     </div>
     <div class="col-8">
-      <div class="text-title-content mb-4">Wisata Vaksin Sambil Lihat Air Terjun Niagara, Harga Mulai Rp 38 Juta</div>
-      <div class="text-desc-content">
-        Amerika Timur menjadi destinasi selanjutnya untuk wisata vaksin. Agen travel AntaVaya menawarkan paket wisata vaksin ke sana dengan harga mulai Rp 38 juta.
-        <br><br>
-        Paket perjalanan wisata vaksin ke Amerika Serikat ini akan dilakukan selama 12 hari 8 malam. Dengan harga Rp 38,8 juta, traveler akan mendapatkan vaksin, tiket pesawat pulang dan pergi kelas ekonomi menggunakan maskapai Qatar Airlines.
-      </div>
+        <a href="/article/{{articles.0.id}}">
+          <div class="text-title-content mb-4">{{articles.0.title}}</div>
+          <div class="text-desc-content">
+            {{articles.0.content}}
+          </div>
+        </a>
     </div>
   </div>
   <div class="row mt-5">
-    <div class="col-3 content-list">
-      <a href="article/1">
-        <img src="#" class="img" alt="">
-        <div class="title mt-3">
-          Link Live Streaming Brasil Vs Jerman di Olimpiade Tokyo 2020
-        </div>
-      </a>
-    </div>
-    <div class="col-3 content-list">
-      <a href="article/2">
-        <img src="#" class="img" alt="">
-        <div class="title mt-3">
-          Pengusaha Minta Semua Ritel Buka 26 Juli Agar PHK Tak Tambah Panjang
-        </div>
-      </a>
-    </div>
-    <div class="col-3 content-list">
-      <a href="article/2">
-        <img src="#" class="img" alt="">
-        <div class="title mt-3">
-          Ada Anggaran Toyota Camry untuk Pimpinan DPRD Banten, Segini Harganya
-        </div>
-      </a>
-    </div>
-    <div class="col-3 content-list">
-      <a href="article/2">
-        <img src="#" class="img" alt="">
-        <div class="title mt-3">
-          Selebgram Ngamuk Soal Syarat Perjalanan, Angkasa Pura II Beri Penjelasan
-        </div>
-      </a>
-    </div>
+    {{#each articles}}
+      <div class="col-3 content-list">
+        <a href="/article/{{this.id}}">
+          <img src="{{this.image}}" class="img img-fluid" alt="">
+          <div class="title mt-3">
+            {{this.title}}
+          </div>
+        </a>
+      </div>
+    {{/each}}
   </div>
+  {{else}}
+    <div class="row">
+      <div class="col-3"></div>
+      <div class="col-6">
+        <img src="/public/image/noData.svg" alt="" class="img-fluid mt-4">
+      </div>
+    </div>
+  {{/if}}
 </div>
 
 {{> footer}}
