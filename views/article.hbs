@@ -1,23 +1,32 @@
 {{> header}}
 {{> navbar}}
 
-<div class="container article">
+<div class="container article pb-5">
     <div class="px-5">
         {{#if isContentOwner}}
             <div class="text-end mb-2">
-                <a href="/#" class="btn-edit"><img src="/public/icons/edit.svg" alt=""></a>
+                <a href="/article-edit/{{article.id}}" class="btn-edit"><img src="/public/icons/edit.svg" alt=""></a>
                 <a href="/article-delete/{{article.id}}" class="btn-delete"><img src="/public/icons/delete.svg" alt=""></a>
             </div>
         {{/if}}
 
         <img src="{{article.image}}" alt="" class="img-main img-fluid" >
         
-        <h4 class="mt-4">{{article.title}}</h4>
+        <h4 class="mt-4 mb-5">{{article.title}}</h4>
 
-        <p>{{article.content}}</p>
+        <p id="display-article-content">{{article.content}}</p>
+
+        <input type="hidden" id="article-content" value="{{article.content}}">
 
     </div>
 </div>
+
+<script>
+    const articleContent = document.getElementById('article-content').value;
+    const displayArticleContent = document.getElementById('display-article-content');
+
+    displayArticleContent.innerHTML = articleContent;
+</script>
 
 {{> footer}}
     

@@ -19,15 +19,14 @@
     <div class="col-8">
         <a href="/article/{{articles.0.id}}">
           <div class="text-title-content mb-4">{{articles.0.title}}</div>
-          <div class="text-desc-content">
-            {{articles.0.content}}
-          </div>
+          <div class="text-desc-content" id="display-article-content"></div>
         </a>
+        <input type="hidden" id="article-content" value="{{articles.0.content}}">
     </div>
   </div>
-  <div class="row mt-5">
+  <div class="row my-5">
     {{#each articles}}
-      <div class="col-3 content-list">
+      <div class="col-3 content-list mb-3">
         <a href="/article/{{this.id}}">
           <img src="{{this.image}}" class="img img-fluid" alt="">
           <div class="title mt-3">
@@ -46,6 +45,12 @@
     </div>
   {{/if}}
 </div>
+<script>
+  let articleContent = document.getElementById('article-content').value;
+  const displayArticleContent = document.getElementById('display-article-content');
+
+  displayArticleContent.innerHTML = articleContent.split(".")[0];
+</script>
 
 {{> footer}}
     

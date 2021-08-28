@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   session({
     cookie: {
-      maxAge: 60000,
+      maxAge: 2 * 60 * 60 * 1000,
       secure: false,
       httpOnly: true,
     },
@@ -66,8 +66,6 @@ app.get('/', function (req, res) {
       if (articles.length == 0) {
         articles = false;
       }
-
-      console.log(articles);
 
       res.render('index', {
         title: 'Articles',
@@ -149,10 +147,64 @@ app.get('/article-delete/:id', function (req, res) {
   });
 });
 
+app.get('/article-edit/:id', function (req, res) {
+  const { id } = req.params;
+  const title = 'Edit Article';
+
+  const query = `SELECT * FROM tb_article WHERE id = ${id};`;
+
+  dbConnetion.getConnection((err, conn) => {
+    if (err) throw err;
+
+    conn.query(query, (err, results) => {
+      // if (err) throw err;
+      const article = {
+        ...results[0],
+        image: pathFile + results[0].image,
+      };
+      res.render('editArticle', {
+        title,
+        isLogin: req.session.isLogin,
+        article,
+      });
+    });
+  });
+});
+
+app.post('/article-edit', uploadFile('image'), function (req, res) {
+  let { id, title, content, oldImage } = req.body;
+
+  let image = oldImage.replace(pathFile, '');
+
+  if (req.file) {
+    image = req.file.filename;
+  }
+
+  const query = `UPDATE tb_article SET title = "${title}", content = "${content}", image = "${image}" WHERE id = ${id}`;
+
+  dbConnetion.getConnection((err, conn) => {
+    // if (err) throw err;
+    if (err) {
+      console.log(err);
+    }
+
+    conn.query(query, (err, results) => {
+      // if (err) throw err;
+
+      if (err) {
+        console.log(err);
+      }
+      res.redirect(`/article/${id}`);
+    });
+  });
+});
+
 app.post('/article-add', uploadFile('image'), function (req, res) {
-  const { title, content } = req.body;
+  let { title, content } = req.body;
   const image = req.file.filename;
   const userId = req.session.user.id;
+
+  content = content.replace(/(\r\n)/g, '<br>');
 
   if (title == '' || content == '') {
     req.session.message = {
@@ -162,21 +214,25 @@ app.post('/article-add', uploadFile('image'), function (req, res) {
     return res.redirect('/article-add');
   }
 
-  const query = `INSERT INTO tb_article (image,title,content,user_id) 
-                  VALUES ('${image}','${title}','${content}','${userId}');`;
+  const query = `INSERT INTO tb_article (image,title,content,user_id) VALUES ("${image}","${title}","${content}",${userId});`;
 
   dbConnetion.getConnection((err, conn) => {
     if (err) throw err;
 
     conn.query(query, (err, results) => {
-      if (err) throw err;
+      // if (err) throw err;
 
-      req.session.message = {
-        type: 'success',
-        message: 'Add article has successfully!',
-      };
+      if (err) {
+        console.log(err);
+        res.redirect(`/article-add`);
+      } else {
+        req.session.message = {
+          type: 'success',
+          message: 'Add article has successfully!',
+        };
 
-      res.redirect(`/article/${results.insertId}`);
+        res.redirect(`/article/${results.insertId}`);
+      }
     });
   });
 });

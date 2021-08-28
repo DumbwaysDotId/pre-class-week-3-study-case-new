@@ -41,21 +41,23 @@ module.exports = (imageFile) => {
   return (req, res, next) => {
     upload(req, res, function (err) {
       // show an error if validation failed
-      if (req.fileValidationError) {
-        req.session.message = {
-          type: 'danger',
-          message: 'Please select files to upload',
-        };
-        return res.redirect(req.originalUrl);
-      }
+      // if (req.fileValidationError) {
+      //   req.session.message = {
+      //     type: 'danger',
+      //     message: 'Please select files to upload',
+      //   };
+      //   return res.redirect(req.originalUrl);
+      // }
+
       // show an error if file doesn't provided in req
-      if (!req.file && !err) {
-        req.session.message = {
-          type: 'danger',
-          message: 'Please select files to upload',
-        };
-        return res.redirect(req.originalUrl);
-      }
+      // if (!req.file && !err) {
+      //   req.session.message = {
+      //     type: 'danger',
+      //     message: 'Please select files to upload',
+      //   };
+      //   return res.redirect(req.originalUrl);
+      // }
+
       // show an error if it exceeds the max size
       if (err) {
         if (err.code === 'LIMIT_FILE_SIZE') {

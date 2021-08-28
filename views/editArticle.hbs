@@ -1,4 +1,5 @@
 {{> header}}
+{{> navbar}}
 
 {{#if message}}
     <div class="alert alert-{{message.type}}" role="alert">
@@ -6,30 +7,34 @@
     </div>
 {{/if}}
 
-{{> navbar}}
-
 <div class="container text-center pt-5">
-    <form action="/article-add" method="POST" enctype="multipart/form-data">
+    <form action="/article-edit" method="POST" enctype="multipart/form-data">
+        <input type="hidden" value="{{article.id}}" name="id">
+        <input type="hidden" value="{{article.image}}" name="oldImage">
         <div class="file-input-group text-start">
             <input type="file" hidden id="file" aria-label="File browser example" name="image" onchange="handleChange()">
             <label for="file">Attache Thumbnail <img src="/public/icons/attach.svg" alt=""></label>
         </div>
         <div id="preview-thumbnail" class="text-start"></div>
         <div>
-            <input type="text" placeholder="Title" name="title" value="Ini judul artikel">
+            <input type="text" placeholder="Title" name="title" value="{{article.title}}">
         </div>
         <div>
-            <textarea placeholder="Article Content" name="content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque, provident?</textarea>
+            <textarea placeholder="Article Content" name="content">{{article.content}}</textarea>
         </div>
         <div class="text-end">
             <button class="btn-submit-article">Submit</button>
         </div>
+        <input type="hidden" value="{{article.image}}" id="url-thumbnail">
     </form>
 </div>
 
 <script>
+    const previewElement = document.getElementById('preview-thumbnail');
+    const urlThumbnail= document.getElementById('url-thumbnail').value;
+    previewElement.innerHTML = `<img src="${urlThumbnail}" style="width: 250px; margin-left: 170px;" class="mb-3"/>`;
+
     function handleChange(){
-        const previewElement = document.getElementById('preview-thumbnail');
         const value = URL.createObjectURL(event.target.files[0]);
         previewElement.innerHTML = `<img src="${value}" style="width: 250px; margin-left: 170px;" class="mb-3"/>`
     }
