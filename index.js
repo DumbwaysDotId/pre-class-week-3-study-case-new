@@ -1,15 +1,17 @@
-const http = require('http');
-const express = require('express');
-const path = require('path');
+const http = require("http");
+const express = require("express");
+const path = require("path");
 const app = express();
-const hbs = require('hbs');
-const session = require('express-session');
+const hbs = require("hbs");
+const session = require("express-session");
+const flash = require("express-flash");
 
-const dbConnetion = require('./connection/db');
-const uploadFile = require('./middlewares/uploadFile');
+const dbConnetion = require("./connection/db");
+const uploadFile = require("./middlewares/uploadFile");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(flash());
 
 app.use(
   session({
@@ -21,22 +23,21 @@ app.use(
     store: new session.MemoryStore(),
     saveUninitialized: true,
     resave: false,
-    secret: 'secretValue',
+    secret: "secretValue",
   })
 );
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "hbs");
 
-hbs.registerPartials(__dirname + '/views/partials');
+hbs.registerPartials(__dirname + "/views/partials");
 
 const server = http.createServer(app);
 const port = 3000;
-const pathFile = 'http://localhost:3000/uploads/';
-// var isLogin = false;
+const pathFile = "http://localhost:3000/uploads/";
 
 // Setup flash message middleware
 app.use((req, res, next) => {
@@ -46,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 // URL
-app.get('/', function (req, res) {
+app.get("/", function (req, res) {
   const query = `SELECT * FROM tb_article ORDER BY id DESC;`;
 
   dbConnetion.getConnection((err, conn) => {
@@ -67,16 +68,17 @@ app.get('/', function (req, res) {
         articles = false;
       }
 
-      res.render('index', {
-        title: 'Articles',
+      res.render("index", {
+        title: "Articles",
         isLogin: req.session.isLogin,
         articles,
       });
     });
+    conn.release();
   });
 });
 
-app.get('/article/:id', function (req, res) {
+app.get("/article/:id", function (req, res) {
   var { id } = req.params;
 
   const query = `SELECT * FROM tb_article WHERE id = ${id}`;
@@ -100,24 +102,26 @@ app.get('/article/:id', function (req, res) {
         }
       }
 
-      res.render('article', {
-        title: 'Articles',
+      res.render("article", {
+        title: "Articles",
         isLogin: req.session.isLogin,
         article,
         isContentOwner,
       });
     });
+
+    conn.release();
   });
 });
 
-app.get('/article-add', function (req, res) {
-  res.render('addArticle', {
-    title: 'Add Articles',
+app.get("/article-add", function (req, res) {
+  res.render("addArticle", {
+    title: "Add Articles",
     isLogin: req.session.isLogin,
   });
 });
 
-app.get('/article-delete/:id', function (req, res) {
+app.get("/article-delete/:id", function (req, res) {
   const { id } = req.params;
 
   const query = `DELETE FROM tb_article WHERE id = ${id};`;
@@ -131,25 +135,27 @@ app.get('/article-delete/:id', function (req, res) {
       if (err) {
         console.log(id);
         req.session.message = {
-          type: 'danger',
+          type: "danger",
           message: err.sqlMessage,
         };
-        res.redirect('/');
+        res.redirect("/");
       } else {
         req.session.message = {
-          type: 'success',
+          type: "success",
           message: `Article successfully deleted! ID = ${id}`,
         };
 
-        res.redirect('/');
+        res.redirect("/");
       }
     });
+
+    conn.release();
   });
 });
 
-app.get('/article-edit/:id', function (req, res) {
+app.get("/article-edit/:id", function (req, res) {
   const { id } = req.params;
-  const title = 'Edit Article';
+  const title = "Edit Article";
 
   const query = `SELECT * FROM tb_article WHERE id = ${id};`;
 
@@ -160,21 +166,24 @@ app.get('/article-edit/:id', function (req, res) {
       // if (err) throw err;
       const article = {
         ...results[0],
+        content: results[0].content.replace(/<br>/g, "\r\n"),
         image: pathFile + results[0].image,
       };
-      res.render('editArticle', {
+      res.render("editArticle", {
         title,
         isLogin: req.session.isLogin,
         article,
       });
     });
+
+    conn.release();
   });
 });
 
-app.post('/article-edit', uploadFile('image'), function (req, res) {
+app.post("/article-edit", uploadFile("image"), function (req, res) {
   let { id, title, content, oldImage } = req.body;
 
-  let image = oldImage.replace(pathFile, '');
+  let image = oldImage.replace(pathFile, "");
 
   if (req.file) {
     image = req.file.filename;
@@ -196,22 +205,24 @@ app.post('/article-edit', uploadFile('image'), function (req, res) {
       }
       res.redirect(`/article/${id}`);
     });
+
+    conn.release();
   });
 });
 
-app.post('/article-add', uploadFile('image'), function (req, res) {
+app.post("/article-add", uploadFile("image"), function (req, res) {
   let { title, content } = req.body;
   const image = req.file.filename;
   const userId = req.session.user.id;
 
-  content = content.replace(/(\r\n)/g, '<br>');
+  content = content.replace(/(\r\n)/g, "<br>");
 
-  if (title == '' || content == '') {
+  if (title == "" || content == "") {
     req.session.message = {
-      type: 'danger',
-      message: 'Please insert all field!',
+      type: "danger",
+      message: "Please insert all field!",
     };
-    return res.redirect('/article-add');
+    return res.redirect("/article-add");
   }
 
   const query = `INSERT INTO tb_article (image,title,content,user_id) VALUES ("${image}","${title}","${content}",${userId});`;
@@ -227,33 +238,35 @@ app.post('/article-add', uploadFile('image'), function (req, res) {
         res.redirect(`/article-add`);
       } else {
         req.session.message = {
-          type: 'success',
-          message: 'Add article has successfully!',
+          type: "success",
+          message: "Add article has successfully!",
         };
 
         res.redirect(`/article/${results.insertId}`);
       }
     });
+
+    conn.release();
   });
 });
 
-app.get('/login', function (req, res) {
-  res.render('login', {
-    title: 'Login',
+app.get("/login", function (req, res) {
+  res.render("login", {
+    title: "Login",
     auth: true,
   });
 });
 
-app.post('/login', function (req, res) {
+app.post("/login", function (req, res) {
   const { email, password } = req.body;
-  const query = `SELECT id, email, MD5(password) as password, name, photo FROM tb_user WHERE email = '${email}' AND password = '${password}';`;
+  const query = `SELECT id, email, MD5(password) as password, name FROM tb_user WHERE email = '${email}' AND password = '${password}';`;
 
-  if (email == '' || password == '') {
+  if (email == "" || password == "") {
     req.session.message = {
-      type: 'danger',
-      message: 'Please insert email or password!',
+      type: "danger",
+      message: "Please insert email or password!",
     };
-    return res.redirect('/login');
+    return res.redirect("/login");
   }
 
   dbConnetion.getConnection((err, conn) => {
@@ -264,14 +277,14 @@ app.post('/login', function (req, res) {
 
       if (results.length == 0) {
         req.session.message = {
-          type: 'danger',
-          message: 'Email and password dont match!',
+          type: "danger",
+          message: "Email and password dont match!",
         };
-        return res.redirect('/login');
+        return res.redirect("/login");
       } else {
         req.session.message = {
-          type: 'success',
-          message: 'Login has successfully!',
+          type: "success",
+          message: "Login has successfully!",
         };
         req.session.isLogin = true;
         req.session.user = {
@@ -280,29 +293,31 @@ app.post('/login', function (req, res) {
           name: results[0].name,
           photo: results[0].photo,
         };
-        return res.redirect('/');
+        return res.redirect("/");
       }
     });
+
+    conn.release();
   });
 });
 
-app.get('/register', function (req, res) {
-  res.render('register', {
-    title: 'Register',
+app.get("/register", function (req, res) {
+  res.render("register", {
+    title: "Register",
     auth: true,
   });
 });
 
-app.post('/register', function (req, res) {
+app.post("/register", function (req, res) {
   const { email, name, password } = req.body;
   const query = `INSERT INTO tb_user (email,password,name) VALUES ('${email}','${password}','${name}');`;
 
-  if (email == '' || name == '' || password == '') {
+  if (email == "" || name == "" || password == "") {
     req.session.message = {
-      type: 'danger',
-      message: 'Please insert all field!',
+      type: "danger",
+      message: "Please insert all field!",
     };
-    return res.redirect('/register');
+    return res.redirect("/register");
   }
 
   dbConnetion.getConnection((err, conn) => {
@@ -312,16 +327,18 @@ app.post('/register', function (req, res) {
       if (err) throw err;
 
       req.session.message = {
-        type: 'success',
-        message: 'Register has successfully!',
+        type: "success",
+        message: "Register has successfully!",
       };
 
-      res.redirect('/register');
+      res.redirect("/register");
     });
+
+    conn.release();
   });
 });
 
-app.get('/users', (req, res) => {
+app.get("/users", (req, res) => {
   const query = `SELECT * FROM tb_user`;
 
   dbConnetion.getConnection((err, conn) => {
@@ -330,15 +347,17 @@ app.get('/users', (req, res) => {
       if (err) throw err;
       res.send(results);
     });
+
+    conn.release();
   });
 });
 
-app.get('/logout', (req, res) => {
+app.get("/logout", (req, res) => {
   req.session.destroy();
-  res.redirect('/');
+  res.redirect("/");
 });
 
-hbs.handlebars.registerHelper('isAuth', function (value) {
+hbs.handlebars.registerHelper("isAuth", function (value) {
   if (value == true) {
     return false;
   } else {
@@ -347,4 +366,4 @@ hbs.handlebars.registerHelper('isAuth', function (value) {
 });
 
 server.listen(port);
-console.debug('Server listening on port ' + port);
+console.debug("Server listening on port " + port);

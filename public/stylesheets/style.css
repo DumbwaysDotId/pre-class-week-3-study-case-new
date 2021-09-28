@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
 * {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .navbar-brand {
@@ -64,27 +64,43 @@
   line-height: 21px;
 }
 
+form {
+  margin: 25px 65px 0;
+}
 form input {
-  width: 950px;
-  height: 40px;
-  padding: 0 10px;
-  background: rgba(210, 210, 210, 0.25);
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  line-height: 1.5;
+  color: #212529;
+  background-color: rgba(210, 210, 210, 0.25);
   border: 2px solid #bcbcbc;
-  box-sizing: border-box;
   border-radius: 5px;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  transition: all linear 0.1s;
+}
+
+form input:focus {
+  outline: none;
+  box-shadow: 1px 1px 4px 2px rgba(0, 0, 0, 0.2);
 }
 
 form textarea {
-  width: 950px;
-  padding: 0 10px;
-  background: rgba(210, 210, 210, 0.25);
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  line-height: 1.5;
+  color: #212529;
+  background-color: rgba(210, 210, 210, 0.25);
   border: 2px solid #bcbcbc;
-  box-sizing: border-box;
   border-radius: 5px;
-  margin-bottom: 20px;
-  padding-top: 10px;
-  min-height: 200px;
+  margin-bottom: 1.5rem;
+  transition: all linear 0.1s;
+}
+
+form textarea:focus {
+  outline: none;
+  box-shadow: 1px 1px 4px 2px rgba(0, 0, 0, 0.2);
 }
 
 form button {
@@ -100,13 +116,20 @@ form button {
 }
 
 .file-input-group label {
-  background: rgba(210, 210, 210, 0.25);
-  margin-bottom: 20px;
+  width: fit-content;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: rgba(210, 210, 210, 0.25);
+  background-clip: padding-box;
+  appearance: none;
   border: 2px solid #bcbcbc;
   border-radius: 5px;
-  margin-left: 170px;
-  padding: 5px 10px;
+  margin-bottom: 1.5rem;
   cursor: pointer;
+  transition: all linear 0.1s;
 }
 
 .file-input-group label img {
@@ -127,7 +150,7 @@ form button {
 }
 .dropdown-menu::after {
   background-color: #fff;
-  content: '\00a0';
+  content: "\00a0";
   position: absolute;
   display: block;
   z-index: -1;
@@ -191,10 +214,6 @@ form button {
 
 .article a img {
   width: 35px;
-}
-
-.btn-submit-article {
-  margin-right: 170px;
 }
 
 .main-content a {

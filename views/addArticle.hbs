@@ -16,10 +16,10 @@
         </div>
         <div id="preview-thumbnail" class="text-start"></div>
         <div>
-            <input type="text" placeholder="Title" name="title" value="Ini judul artikel">
+            <input type="text" placeholder="what's the title?" name="title" required>
         </div>
         <div>
-            <textarea placeholder="Article Content" name="content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque, provident?</textarea>
+            <textarea placeholder="article content" name="content" rows="8" required></textarea>
         </div>
         <div class="text-end">
             <button class="btn-submit-article">Submit</button>
@@ -31,7 +31,7 @@
     function handleChange(){
         const previewElement = document.getElementById('preview-thumbnail');
         const value = URL.createObjectURL(event.target.files[0]);
-        previewElement.innerHTML = `<img src="${value}" style="width: 250px; margin-left: 170px;" class="mb-3"/>`
+        previewElement.innerHTML = `<img src="${value}" style="width: 250px;" class="mb-3"/>`
     }
 </script>
 

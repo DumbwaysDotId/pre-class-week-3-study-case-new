@@ -1,14 +1,14 @@
-const multer = require('multer');
+const multer = require("multer");
 
 module.exports = (imageFile) => {
   // initialization multer diskstorage
   // make destination file for upload
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'uploads'); //file storage location
+      cb(null, "uploads"); //file storage location
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname.replace(/\s/g, '')); // rename filename by date now + original filename
+      cb(null, Date.now() + "-" + file.originalname.replace(/\s/g, "")); // rename filename by date now + original filename
     },
   });
 
@@ -17,9 +17,9 @@ module.exports = (imageFile) => {
     if (file.fieldname === imageFile) {
       if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
         req.fileValidationError = {
-          message: 'Only image files are allowed!',
+          message: "Only image files are allowed!",
         };
-        return cb(new Error('Only image files are allowed!'), false);
+        return cb(new Error("Only image files are allowed!"), false);
       }
     }
     cb(null, true);
@@ -60,18 +60,17 @@ module.exports = (imageFile) => {
 
       // show an error if it exceeds the max size
       if (err) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
+        if (err.code === "LIMIT_FILE_SIZE") {
           req.session.message = {
-            type: 'danger',
-            message: 'Error, Max file sized 10MB',
+            type: "danger",
+            message: "Error, Max file sized 10MB",
           };
           return res.redirect(req.originalUrl);
         }
         req.session.message = {
-          type: 'danger',
-          message: err,
+          type: "danger",
+          message: "upload file error",
         };
-        req.flash('error', err);
         return res.redirect(req.originalUrl);
       }
 

@@ -20,7 +20,7 @@
             <input type="text" placeholder="Title" name="title" value="{{article.title}}">
         </div>
         <div>
-            <textarea placeholder="Article Content" name="content">{{article.content}}</textarea>
+            <textarea placeholder="Article Content" name="content" rows="8">{{article.content}}</textarea>
         </div>
         <div class="text-end">
             <button class="btn-submit-article">Submit</button>
@@ -32,11 +32,11 @@
 <script>
     const previewElement = document.getElementById('preview-thumbnail');
     const urlThumbnail= document.getElementById('url-thumbnail').value;
-    previewElement.innerHTML = `<img src="${urlThumbnail}" style="width: 250px; margin-left: 170px;" class="mb-3"/>`;
+    previewElement.innerHTML = `<img src="${urlThumbnail}" style="width: 250px;" class="mb-3"/>`;
 
     function handleChange(){
         const value = URL.createObjectURL(event.target.files[0]);
-        previewElement.innerHTML = `<img src="${value}" style="width: 250px; margin-left: 170px;" class="mb-3"/>`
+        previewElement.innerHTML = `<img src="${value}" style="width: 250px;" class="mb-3"/>`
     }
 </script>
 
